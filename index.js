@@ -1,7 +1,8 @@
-const { uuid } = require("uuidv4");
 const express = require("express");
 const app = express();
 const http = require("http");
+var cors = require("cors");
+
 const server = http.createServer(app);
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 
@@ -29,6 +30,20 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(5000, () =>
-  console.log("server running => http://localhost:5000")
-);
+app.use(cors());
+
+app.get("/checkRoom/:roomCode", (req, res) => {
+  try {
+    if (io.sockets.adapter.rooms.get(req.params.roomCode).size <= 2)
+      return res.status(200).json({ vacant: true });
+    return res.status(500).json({ vacant: false });
+  } catch {
+    return res.status(200).json({ vacant: true });
+  }
+});
+
+app.get("/", (req, res) => {
+  res.send("welcome to animeXfusion Backend");
+});
+
+server.listen(5000, () => console.log("server running "));
