@@ -33,8 +33,10 @@ io.on("connection", (socket) => {
 app.use(cors());
 
 app.get("/checkRoom/:roomCode", (req, res) => {
+  console.log(io.sockets.adapter.rooms.get(req.params.roomCode)?.size);
+
   try {
-    if (io.sockets.adapter.rooms.get(req.params.roomCode).size <= 2)
+    if (io.sockets.adapter.rooms.get(req.params.roomCode).size < 2)
       return res.status(200).json({ vacant: true });
     return res.status(500).json({ vacant: false });
   } catch {
