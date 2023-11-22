@@ -14,8 +14,8 @@ io.on("connection", (socket) => {
       socket.emit("roomFull");
     }
     socket.join(roomCode);
-    var members = Array.from(io.sockets.adapter.rooms.get(roomCode));
-    members.sort();
+    const mems = Array.from(io.sockets.adapter.rooms.get(roomCode));
+    const members = mems.sort();
     characters[members[members.length - 1]] = characterId;
     if (members.length === 2)
       io.to(roomCode).emit("startGame", { members: members, characters });
