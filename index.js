@@ -29,8 +29,15 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("syncValues", ({ enemy, player, roomCode }) => {
-    socket.broadcast.to(roomCode).emit("syncValues", {
+  socket.on("syncPosition", ({ enemy, player, roomCode }) => {
+    socket.broadcast.to(roomCode).emit("syncPosition", {
+      enemy,
+      player,
+    });
+  });
+
+  socket.on("syncHealth", ({ enemy, player, roomCode }) => {
+    socket.broadcast.to(roomCode).emit("syncHealth", {
       enemy,
       player,
     });
