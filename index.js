@@ -14,11 +14,19 @@ io.on("connection", (socket) => {
       socket.emit("roomFull");
     }
     socket.join(roomCode);
-    const mems = Array.from(io.sockets.adapter.rooms.get(roomCode));
-    const members = mems.sort();
-    characters[members[members.length - 1]] = characterId;
-    if (members.length === 2)
+    const members = Array.from(io.sockets.adapter.rooms.get(roomCode));
+    members.sort();
+
+    console.log(socket.id, "joined", members.length);
+
+    if (members[0] in characters) characters[members[1]] = characterId;
+    else characters[members[0]] = characterId;
+    console.log(characters, members);
+
+    if (members.length === 2) {
       io.to(roomCode).emit("startGame", { members: members, characters });
+      console.log("join", characters, members);
+    }
   });
 
   socket.on("keyPress", (action, roomCode) => {
@@ -27,7 +35,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     delete characters[socket.id];
-    console.log("User Disconnected");
+    console.log("User Disconnected", socket.id);
   });
 });
 
