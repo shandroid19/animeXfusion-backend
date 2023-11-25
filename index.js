@@ -17,15 +17,11 @@ io.on("connection", (socket) => {
     const members = Array.from(io.sockets.adapter.rooms.get(roomCode));
     members.sort();
 
-    console.log(socket.id, "joined", members.length);
-
     if (members[0] in characters) characters[members[1]] = characterId;
     else characters[members[0]] = characterId;
-    console.log(characters, members);
 
     if (members.length === 2) {
       io.to(roomCode).emit("startGame", { members: members, characters });
-      console.log("join", characters, members);
     }
   });
 
@@ -45,6 +41,11 @@ io.on("connection", (socket) => {
 
   socket.on("keyPress", (action, roomCode) => {
     socket.broadcast.to(roomCode).emit("keyPress", action);
+  });
+
+  socket.on("disconnecting", function () {
+    const rooms = Array.from(socket.rooms);
+    socket.broadcast.to(rooms[1]).emit("opponentLeft");
   });
 
   socket.on("disconnect", () => {
